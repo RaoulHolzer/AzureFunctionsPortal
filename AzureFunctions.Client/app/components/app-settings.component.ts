@@ -33,6 +33,7 @@ export class AppSettingsComponent implements OnInit {
     public showDailyMemoryWarning: boolean = false;
     public showDailyMemoryInfo: boolean = false;
     private showTryView: boolean;
+    private exactRuntimeVersion: string;
 
     set functionContainer(value: FunctionContainer) {
         this.debugConsole = `https://${value.properties.hostNameSslStates.find(s => s.hostType === 1).name}/DebugConsole`;
@@ -75,6 +76,8 @@ export class AppSettingsComponent implements OnInit {
         this.needUpdateExtensionVersion = !this._globalStateService.IsLatest;
         this.extensionVersion = this._globalStateService.ExtensionVersion;
         this.latestExtensionVersion = Constants.runtimeVersion;
+        this._functionsService.getRuntimeVersion()
+            .subscribe(r => this.exactRuntimeVersion = r, e => {});
     }
 
     openBlade(name : string) {

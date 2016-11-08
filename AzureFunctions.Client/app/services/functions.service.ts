@@ -717,7 +717,18 @@ export class FunctionsService {
 
     setEasyAuth(config: { [key: string]: any }) {
         this.isEasyAuthEnabled = config['enabled'] && config['unauthenticatedClientAction'] !== 1;
-    }
+     }
+     
+     @Cache()
+     getRuntimeVersion() {
+         if (this.isEasyAuthEnabled || !this.masterKey) {
+             return Observable.of('');
+        } else {
+            return this._http.get(`${this.mainSiteUrl}/admin/host/status`, { headers: this.getMainSiteHeaders() })
+                 .map<string>(r => r.json().version)
+                 .catch(e => Observable.of(''));
+         }
+     }
 
     getOldLogs(fi: FunctionInfo, range: number): Observable<string> {
         return this._http.get(`${this.scmUrl}/vfs/logfiles/application/functions/function/${fi.name}/`, { headers: this.getScmSiteHeaders() })
